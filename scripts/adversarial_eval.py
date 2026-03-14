@@ -229,12 +229,14 @@ def main():
         bundle = pickle.load(f)
     model = bundle["model"]
     feature_cols = bundle["feature_cols"]
+    scaler = bundle.get("scaler")
 
     test = pd.read_parquet(DATA_DIR / "test.parquet")
     if args.sample_frac < 1.0:
         test = test.sample(frac=args.sample_frac, random_state=args.seed)
 
-    X_test = test[feature_cols].fillna(0).values
+    X_test_raw = test[feature_cols].fillna(0).values
+    X_test = scaler.transform(X_test_raw) if scaler is not None else X_test_raw
     y_test = test["exploited"].values
     descriptions = test["description"].tolist()
 

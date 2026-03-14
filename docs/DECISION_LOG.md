@@ -49,3 +49,31 @@
 - **Decision:** Encode 11 practitioner-knowledge keyword features as binary flags alongside TF-IDF. This makes the "practitioner vs formula" thesis explicit in features.
 - **Consequences:** If these dominate SHAP importance → validates that domain knowledge outperforms static formulas. If TF-IDF dominates → model learns patterns practitioners don't explicitly articulate. Either outcome is interesting for the blog post.
 - **Contracts affected:** build_features.py, PUBLICATION_PIPELINE (key talking point)
+
+## ADR-0007: Structured features only (no TF-IDF in v1)
+- **Date:** 2026-03-14 | **Phase:** 1
+- **Context:** build_tfidf_features() was written but structured features alone achieved AUC 0.903. Adding 500 TF-IDF dimensions would increase training time and reduce interpretability.
+- **Decision:** Ship v1 with 49 structured features only. TF-IDF is stretch goal.
+- **Consequences:** May miss semantic patterns in descriptions. But SHAP on structured features is cleaner and the blog story (practitioner keywords vs non-obvious features) is stronger without TF-IDF noise.
+- **Contracts affected:** EXPERIMENT_CONTRACT, FINDINGS.md (documented as limitation)
+
+## ADR-0008: class_weight="balanced" for all models
+- **Date:** 2026-03-14 | **Phase:** 2
+- **Context:** Training set is 10.5% exploited (imbalanced). Test set is 0.3% (extreme). Without class weighting, models predict majority class.
+- **Decision:** Use class_weight="balanced" (sklearn) and scale_pos_weight (XGBoost) to handle imbalance.
+- **Consequences:** Improves recall at cost of precision. Appropriate for security triage where missing an exploitable CVE is worse than false alarms.
+- **Contracts affected:** train_models.py, METRICS_CONTRACT
+
+## ADR-0009: LogisticRegression as best model (simplicity over complexity)
+- **Date:** 2026-03-14 | **Phase:** 2
+- **Context:** LogReg AUC (0.903) > RF (0.864) > XGBoost (0.825). Simpler model won. LogReg also enables linear SHAP (exact, not approximate) for better explainability.
+- **Decision:** Use LogReg as primary model for SHAP analysis and adversarial eval.
+- **Consequences:** Linear model is more interpretable and faster. Fits the "explainable security" blog angle. RF/XGBoost results still reported for completeness.
+- **Contracts affected:** run_explainability.py, adversarial_eval.py, FINDINGS.md
+
+## ADR-0010: Feature controllability matrix reused from FP-01
+- **Date:** 2026-03-14 | **Phase:** 3
+- **Context:** FP-01 established the attacker-controllable vs defender-observable split for IDS features. Same methodology applies to CVE features — some fields (description, references) are attacker-influenced, others (CVSS, EPSS, CWE) are not.
+- **Decision:** Reuse FP-01 methodology. Define 15 attacker-controllable and 11 defender-observable features. Test robustness by perturbing only controllable features.
+- **Consequences:** Cross-project validation of feature controllability. 0% evasion because model relies on uncontrollable features. This is the strongest finding — publishable methodology.
+- **Contracts affected:** adversarial_eval.py, ADVERSARIAL_EVALUATION.md, FINDINGS.md

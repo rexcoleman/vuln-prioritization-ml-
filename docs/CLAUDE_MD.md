@@ -25,7 +25,7 @@ When requirements conflict, higher tiers win. Always.
 
 ## Current Phase
 
-**Phase:** 0 — Environment & Data Acquisition
+**Phase:** 4 — Findings & Publication Draft
 
 ### Phase Commands
 
@@ -48,11 +48,11 @@ python scripts/train_models.py --seed 456
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 0 | Environment & Data Acquisition | **CURRENT** |
-| 1 | Data Ingestion & Feature Engineering | Not started |
-| 2 | Baselines & ML Models | Not started |
-| 3 | Explainability & Adversarial | Not started |
-| 4 | Findings & Publication Draft | Not started |
+| 0 | Environment & Data Acquisition | COMPLETE |
+| 1 | Data Ingestion & Feature Engineering | COMPLETE |
+| 2 | Baselines & ML Models | COMPLETE |
+| 3 | Explainability & Adversarial | COMPLETE |
+| 4 | Findings & Publication Draft | **CURRENT** |
 
 > Update the Status column as you progress. Do not advance to Phase N+1 until Phase N gate passes.
 

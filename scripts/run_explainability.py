@@ -39,12 +39,15 @@ def load_model_and_data(seed, sample_frac=1.0):
     model = bundle["model"]
     model_name = bundle["name"]
     feature_cols = bundle["feature_cols"]
+    scaler = bundle.get("scaler")
 
     test = pd.read_parquet(DATA_DIR / "test.parquet")
     if sample_frac < 1.0:
         test = test.sample(frac=sample_frac, random_state=seed)
 
     X_test = test[feature_cols].fillna(0)
+    if scaler is not None:
+        X_test = pd.DataFrame(scaler.transform(X_test), columns=feature_cols, index=X_test.index)
     y_test = test["exploited"].values
 
     return model, model_name, X_test, y_test, feature_cols, test

@@ -48,12 +48,14 @@
 | 15 | has_cwe | 0.06 | CWE | |
 
 **Practitioner keyword features in top 20:** 6/11
-- #16: kw_sql_injection (0.052)
-- #18: kw_remote_code_execution (0.041)
-- #23: kw_denial_of_service (0.016)
-- #24: kw_xss (0.008)
-- #25: kw_arbitrary_code (0.008)
-- #27: kw_allows_attackers (0.007)
+- **#8: kw_sql_injection (0.230)** — strongest keyword signal
+- **#12: kw_remote_code_execution (0.141)** — second strongest
+- #22: kw_denial_of_service (0.046)
+- #23: kw_privilege_escalation (0.041)
+- #25: kw_arbitrary_code (0.027)
+- #26: kw_xss (0.026)
+
+> Note: SHAP values computed with proper StandardScaler applied. Earlier run without scaler suppressed keyword importance (ISS from audit).
 
 **RQ2 verdict:** The strongest predictors of exploitability are:
 1. **How many CVEs a vendor has** (vendor_cve_count) — vendors with large CVE histories have more exploited vulns. *(Your interpretation: why?)*

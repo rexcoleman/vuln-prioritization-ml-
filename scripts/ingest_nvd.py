@@ -122,6 +122,14 @@ def ingest_nvd(api_key=None, start_year=None, resume=False):
             print(f"\nERROR at index {idx}: {e}")
             print(f"Retrying in 30s...")
             time.sleep(30)
+            # Retry same batch, but cap retries to avoid infinite loop
+            retry_count = getattr(ingest_nvd, '_retry_count', 0) + 1
+            ingest_nvd._retry_count = retry_count
+            if retry_count > 5:
+                print(f"Max retries exceeded at index {idx}. Skipping batch.")
+                idx += RESULTS_PER_PAGE
+                batch_num += 1
+                ingest_nvd._retry_count = 0
             continue
 
         vulnerabilities = data.get("vulnerabilities", [])

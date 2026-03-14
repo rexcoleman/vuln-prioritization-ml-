@@ -195,11 +195,17 @@ def main():
     with open(out_file, "w") as f:
         json.dump(summary, f, indent=2)
 
-    # Save best model for SHAP analysis
+    # Save best model for SHAP analysis (include scaler for LogReg)
     best_model = {"random_forest": rf_model, "xgboost": xgb_model, "logistic_regression": lr_model}[best_name]
+    best_scaler = lr_scaler if best_name == "logistic_regression" else None
     model_file = OUTPUT_DIR / f"best_model_seed{args.seed}.pkl"
     with open(model_file, "wb") as f:
-        pickle.dump({"model": best_model, "name": best_name, "feature_cols": feature_cols}, f)
+        pickle.dump({
+            "model": best_model,
+            "name": best_name,
+            "feature_cols": feature_cols,
+            "scaler": best_scaler,
+        }, f)
 
     print(f"\nSaved: {out_file}")
     print(f"Saved: {model_file}")
