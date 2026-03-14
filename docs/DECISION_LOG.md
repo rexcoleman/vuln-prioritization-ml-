@@ -77,3 +77,10 @@
 - **Decision:** Reuse FP-01 methodology. Define 15 attacker-controllable and 11 defender-observable features. Test robustness by perturbing only controllable features.
 - **Consequences:** Cross-project validation of feature controllability. 0% evasion because model relies on uncontrollable features. This is the strongest finding — publishable methodology.
 - **Contracts affected:** adversarial_eval.py, ADVERSARIAL_EVALUATION.md, FINDINGS.md
+
+## ADR-0011: Anti-ghostwriting rule lifted for FINDINGS interpretation
+- **Date:** 2026-03-14 | **Phase:** 4
+- **Context:** CLAUDE_MD §AI Division of Labor prohibits AI from writing "interpretation, analysis, and written discussion." User explicitly overrode this rule for FP-05 FINDINGS.md interpretation sections. The interpretations are grounded in the user's documented profile (15yr FireEye/Mandiant vulnerability triage) and the project's data.
+- **Decision:** AI writes interpretation draft. User reviews, edits, and takes ownership before publication. The published blog post remains the user's voice.
+- **Consequences:** Faster iteration on FINDINGS.md. Risk: interpretation may lack nuance that only practitioner experience provides. Mitigation: user reviews before any publication.
+- **Contracts affected:** CLAUDE_MD (AI Division of Labor override), FINDINGS.md, PUBLICATION_PIPELINE
