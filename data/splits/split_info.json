@@ -1,0 +1,11 @@
+{
+  "method": "temporal",
+  "split_year": 2024,
+  "seed": 42,
+  "train_size": 234601,
+  "test_size": 103352,
+  "train_exploit_rate": 0.10476511182816782,
+  "test_exploit_rate": 0.0030768635343292826,
+  "train_index_hash": "0440fefa60c5e099556c88eb1b75a8748e41ea8e26c3a170e236294d5998c475",
+  "test_index_hash": "f187075154dd92383c73111f32a195b33bae35d80a4bd759c55e61afb97eb640"
+}
