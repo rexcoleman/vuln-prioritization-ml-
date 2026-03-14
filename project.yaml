@@ -1,0 +1,141 @@
+project:
+  name: "ML-Powered Vulnerability Prioritization Engine"
+  profile: security-ml
+  python_version: "3.11"
+  conda_env: "vuln-prioritize"
+
+authority:
+  tier1: "docs/PROJECT_BRIEF.md"
+  tier2: null
+  tier3: "docs/ADVERSARIAL_EVALUATION.md"
+
+publication:
+  title: "Why CVSS Gets It Wrong: ML-Powered Vulnerability Prioritization with Explainable Features"
+  pillar: "AI Security Architecture"
+  venue: "blog"
+  target_date: null  # Build inventory now, publish when brand infra ready
+
+skill_clusters:
+  L: { current: "L3+", target: "L4", how: "NLP feature pipeline + structured prediction + SHAP" }
+  S: { current: "S1-S2", target: "S2-S3", how: "Novel findings on real-world exploitability; adversarial eval on CVE text" }
+  P: { current: "P2++", target: "P3-adj", how: "Multi-source API ingestion, reproducible pipeline" }
+  D: { current: "D3", target: "D3-D4", how: "Documented feature engineering + model selection tradeoffs" }
+  V: { current: "V1", target: "V1-V2", how: "Blog post drafted, published when Hugo live" }
+
+experiments:
+  seeds: [42, 123, 456]
+  parts:
+    - name: baselines
+      methods: [cvss_threshold, epss_threshold, random]
+      datasets: [nvd_exploitdb]
+      script: "scripts/train_baselines.py"
+      flags: "--sample-frac 1.0"
+      output_dir: "outputs/baselines"
+    - name: ml_models
+      methods: [random_forest, xgboost, logistic_regression]
+      datasets: [nvd_exploitdb]
+      script: "scripts/train_models.py"
+      flags: ""
+      output_dir: "outputs/models"
+    - name: explainability
+      methods: [shap_global, shap_local, permutation_importance]
+      datasets: [nvd_exploitdb]
+      script: "scripts/run_explainability.py"
+      flags: ""
+      output_dir: "outputs/explainability"
+    - name: adversarial
+      methods: [synonym_swap, field_injection, noise_perturbation]
+      datasets: [nvd_exploitdb]
+      script: "scripts/adversarial_eval.py"
+      flags: ""
+      output_dir: "outputs/adversarial"
+
+datasets:
+  - name: nvd
+    source: "NIST National Vulnerability Database"
+    download_method: "api"
+    download_url: "https://services.nvd.nist.gov/rest/json/cves/2.0"
+    api_key_env: "NVD_API_KEY"
+    rate_limit: "50 requests per 30 seconds with API key"
+    known_issues:
+      - "Older CVEs (pre-2017) have sparse descriptions"
+      - "CVSS v2 vs v3 transition creates scoring inconsistencies"
+      - "Some CVEs lack CWE classification"
+      - "API rate limiting requires pagination with sleep"
+    local_path: "data/raw/nvd/"
+
+  - name: exploitdb
+    source: "Offensive Security ExploitDB"
+    download_method: "git_clone"
+    download_url: "https://gitlab.com/exploit-database/exploitdb"
+    known_issues:
+      - "CSV index maps exploit ID to CVE; some CVEs have multiple exploits"
+      - "Not all exploits have CVE mappings"
+    local_path: "data/raw/exploitdb/"
+
+  - name: epss
+    source: "First.org EPSS"
+    download_method: "api"
+    download_url: "https://api.first.org/data/v1/epss"
+    known_issues:
+      - "Daily scores; need to pin a date for reproducibility"
+      - "Only covers active CVEs"
+    local_path: "data/raw/epss/"
+
+  - name: github_advisory
+    source: "GitHub Advisory Database"
+    download_method: "api"
+    download_url: "https://api.github.com/advisories"
+    known_issues:
+      - "Rate limited; requires GitHub token"
+      - "~15K reviewed advisories; supplementary labels only"
+    local_path: "data/raw/github_advisory/"
+
+config:
+  base: "config/base.yaml"
+  layers:
+    - pattern: "config/model/*.yaml"
+  resolved_output: "config_resolved.yaml"
+
+phases:
+  - name: "Phase 0 — Environment & Data Acquisition"
+    checks:
+      - command: "bash scripts/verify_env.sh"
+        description: "Environment verification"
+      - command: "python scripts/ingest_nvd.py --check-only"
+        description: "NVD API accessible"
+      - command: "git remote -v"
+        description: "Git remote configured"
+
+  - name: "Phase 1 — Data Ingestion & Feature Engineering"
+    checks:
+      - command: "python scripts/check_data_ready.py"
+        description: "All data sources ingested and joined"
+      - command: "python scripts/check_leakage.py"
+        description: "Temporal split leakage check"
+
+  - name: "Phase 2 — Baselines & ML Models"
+    checks:
+      - command: "python scripts/train_baselines.py --sample-frac 0.01 --seed 42"
+        description: "Smoke test baselines on 1% data"
+
+  - name: "Phase 3 — Explainability & Adversarial"
+    checks:
+      - command: "python scripts/verify_manifests.py"
+        description: "All artifacts verified"
+
+artifacts:
+  run_id_pattern: "{part}_{method}_{dataset}_seed{seed}"
+  per_run_files:
+    - "summary.json"
+    - "config_resolved.yaml"
+  hash_algorithm: "sha256"
+  manifest_file: "outputs/manifest.json"
+
+ai_governance:
+  tools:
+    - name: "Claude Code"
+      role: "Coding copilot, test generation, script execution, governance audit"
+      prohibited: "Must not generate analysis prose, conclusions, or hypothesis resolutions"
+  anti_ghostwriting: true
+  test_set_barrier: true
