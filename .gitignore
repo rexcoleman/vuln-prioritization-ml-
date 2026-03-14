@@ -1,0 +1,33 @@
+# Data (large files, reproducible from scripts)
+data/raw/nvd/nvd_batch_*.json
+data/raw/exploitdb/files_exploits.csv
+data/raw/epss/epss_scores.csv
+data/processed/*.parquet
+
+# Keep metadata and small derived files
+!data/raw/*/metadata.json
+!data/raw/exploitdb/exploited_cves.json
+!data/raw/exploitdb/cve_exploit_mappings.csv
+!data/processed/metadata.json
+!data/processed/feature_cols.json
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.eggs/
+
+# Outputs (reproducible from experiments)
+outputs/
+
+# Environment
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
