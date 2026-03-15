@@ -8,11 +8,11 @@
 |--------|-------|
 | Logistic Regression AUC | 0.903 (+24pp vs CVSS threshold) |
 | EPSS AUC | 0.912 (slightly better, but opaque) |
-| #1 Predictor | Vendor history (35x more important than next feature) |
+| #1 Predictor | EPSS percentile (1.10 mean SHAP — 2x next feature) |
 | Features | 49 features from 3 data sources |
 | Data | 337,953 CVEs (NVD) + 24,936 exploits (ExploitDB) + 320,502 EPSS scores |
 
-**Core insight:** Vendor exploit history dominates all other predictors by 35x. SHAP analysis reveals that CVSS severity — the industry-standard prioritization metric — ranks below vendor history, reference count, and CWE category.
+**Core insight:** EPSS percentile dominates all other predictors (2x the next feature). Vendor CVE count (#4) confirms the deployment-ubiquity thesis. SHAP analysis reveals that CVSS severity — the industry-standard prioritization metric — contributes inside a multi-feature model but fails as a standalone predictor. Single seed (42); multi-seed validation pending.
 
 ## Quick Start
 

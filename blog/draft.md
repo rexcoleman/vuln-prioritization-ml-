@@ -32,16 +32,28 @@ Logistic Regression wins — simpler models outperform on this task because the 
 
 EPSS (0.912) slightly beats our model (0.903), but EPSS is a black box trained on proprietary data. Our model is open, explainable, and built on public data only.
 
-### 2. Vendor History Is the #1 Predictor
+### 2. EPSS Percentile Is the #1 Predictor — Vendor History Confirms Deployment-Ubiquity Thesis
 
-SHAP analysis reveals that `vendor_cve_count` (how many CVEs a vendor has historically) is the dominant predictor — by a factor of 35x over the next feature. Vendors with high CVE counts (Microsoft, Linux kernel, Chrome) have more exploited vulnerabilities because attackers target what's widely deployed.
+> Single seed (42); multi-seed validation pending.
 
-The practitioner-relevant features are:
-- `kw_sql_injection` — strongest keyword signal
-- `kw_remote_code_execution` — second strongest
-- `has_exploit_ref` — CVE references mentioning "exploit" or "PoC"
+SHAP analysis (with StandardScaler applied) reveals a clear hierarchy:
 
-These are the features a security practitioner would use intuitively. The model validates practitioner judgment.
+| Rank | Feature | Mean |SHAP| |
+|------|---------|-------------|
+| 1 | epss_percentile | 1.096 |
+| 2 | has_exploit_ref | 0.573 |
+| 3 | cvss_score | 0.430 |
+| 4 | vendor_cve_count | 0.429 |
+
+EPSS percentile dominates at nearly 2x the next feature. This makes sense — EPSS is itself an ML model trained on real-time threat intelligence. That our model learns to weight it highest confirms that exploit-likelihood signals concentrate in threat intel, not static metadata.
+
+Vendor CVE count (#4) still validates the deployment-ubiquity thesis: vendors with high CVE counts (Microsoft, Linux kernel, Chrome) get exploited disproportionately because attackers target what's widely deployed. But it's not the dominant feature — it's one of four top-tier predictors, essentially tied with CVSS score.
+
+The practitioner-relevant keyword features are meaningful but not dominant:
+- `kw_sql_injection` (#8, 0.230) — strongest keyword signal
+- `kw_remote_code_execution` (#12, 0.141) — second strongest
+
+These validate practitioner judgment, but structural features (EPSS, exploit references, vendor history) matter more than vulnerability class.
 
 ### 3. The Ground Truth Lag Problem
 
