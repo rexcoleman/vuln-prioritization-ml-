@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "vuln-prioritize"
+version = "0.1.0"
+description = "ML-powered vulnerability prioritization replacing CVSS-based triage"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [{name = "Rex Coleman"}]
+keywords = ["ai", "security", "machine-learning"]
+
+[project.urls]
+Homepage = "https://github.com/rexcoleman/vuln-prioritization-ml"
+Repository = "https://github.com/rexcoleman/vuln-prioritization-ml"
+
+[tool.setuptools.packages.find]
+include = ["src*"]
