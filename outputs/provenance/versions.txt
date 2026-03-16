@@ -1,0 +1,41 @@
+certifi==2026.2.25
+charset-normalizer==3.4.5
+cloudpickle==3.1.2
+contourpy @ file:///home/task_176364362873675/conda-bld/contourpy_1763643921742/work
+cycler @ file:///home/task_176606789349323/croot/cycler_1766067915143/work
+fonttools @ file:///home/task_176544511140267/conda-bld/fonttools_1765445134313/work
+idna==3.11
+iniconfig @ file:///home/task_176735680440987/croot/iniconfig_1767356866218/work
+joblib @ file:///home/task_176786813814043/croot/joblib_1767868158778/work
+kiwisolver @ file:///home/task_176415926903268/conda-bld/kiwisolver_1764159297481/work
+lightgbm==4.6.0
+llvmlite==0.46.0
+matplotlib==3.10.8
+numba==0.64.0
+numpy @ file:///home/task_177073258190929/croot/numpy_and_numpy_base_1770732606831/work/dist/numpy-2.4.2-cp311-cp311-linux_x86_64.whl#sha256=7da2ef0ffcfcb355de565397ddb4272e2951a63518308bb6c1196021d94e2998
+packaging @ file:///home/task_176104885106445/conda-bld/packaging_1761049078006/work
+pandas @ file:///home/task_177324542228569/croot/pandas_1773246061267/work
+pillow @ file:///home/task_177247536631345/croot/pillow_1772475405729/work
+pluggy @ file:///croot/pluggy_1733169602837/work
+pyarrow==23.0.1
+Pygments @ file:///home/task_176243133773609/conda-bld/pygments_1762431407413/work
+pyparsing @ file:///home/task_176397386651997/conda-bld/pyparsing_1763973878368/work
+PyQt6==6.10.2
+PyQt6_sip @ file:///home/task_177247745174562/croot/pyqt-split_1772477486006/work/pyqt_sip
+pytest @ file:///home/task_176978722924365/croot/pytest_1769787672032/work
+python-dateutil @ file:///croot/python-dateutil_1716495738603/work
+PyYAML==6.0.3
+requests==2.32.5
+scikit-learn @ file:///home/task_176609794171471/croot/scikit-learn_1766097962795/work
+scipy @ file:///home/task_177325429536632/croot/scipy_1773254343622/work/dist/scipy-1.17.1-cp311-cp311-linux_x86_64.whl#sha256=9386c2aa80137892e84cc3f4a13a9934fab58cdf816328548d621faffa3a4711
+seaborn @ file:///croot/seaborn_1749110291192/work
+shap==0.51.0
+sip @ file:///home/task_177080690330752/croot/sip_1770807534460/work
+six @ file:///croot/six_1744271502820/work
+slicer==0.0.8
+threadpoolctl @ file:///home/task_176436167871245/conda-bld/threadpoolctl_1764361726010/work
+tornado @ file:///home/task_176599244276733/croot/tornado_1765992653467/work
+tqdm==4.67.3
+typing_extensions==4.15.0
+urllib3==2.6.3
+xgboost @ file:///home/task_177203092556744/croot/xgboost-split_1772031722851/work/python-package

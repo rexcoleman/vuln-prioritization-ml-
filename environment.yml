@@ -13,6 +13,7 @@ dependencies:
   - seaborn
   - pytest
   - pyarrow
+  - pyyaml
   - pip:
     - shap
     - requests

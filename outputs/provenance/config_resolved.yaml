@@ -1,0 +1,91 @@
+# Resolved experiment configuration for FP-05 Vulnerability Prioritization
+# Generated from FINDINGS.md experiment parameters
+
+seeds: [42, 123, 456, 789, 1024]
+
+data:
+  sources:
+    nvd: "NVD API — 337,953 CVEs"
+    exploitdb: "ExploitDB — 24,936 exploited labels"
+    epss: "EPSS — 320,502 scores"
+  split:
+    strategy: temporal
+    boundary: "2024-01-01"
+    train_size: 234601
+    test_size: 103352
+    train_exploit_rate: 0.105
+    test_exploit_rate: 0.003
+
+preprocessing:
+  scaler: StandardScaler
+  feature_count: 49
+  feature_groups:
+    epss_features: 2
+    cvss_features: 4
+    cwe_features: 22
+    text_keywords: 11
+    temporal_features: 4
+    reference_features: 3
+    description_stats: 2
+    vendor_features: 1
+
+models:
+  logistic_regression:
+    C: 1.0
+    solver: lbfgs
+    max_iter: 1000
+    best_C_from_sweep: 0.001
+    notes: "Best default-HP model. AUC 0.903 +/- 0.000. Deterministic."
+
+  random_forest:
+    n_estimators: 200
+    max_depth: null
+    random_state: per-seed
+    best_n_estimators_from_sweep: 500
+    notes: "AUC 0.871 +/- 0.012. Severe overfitting (train AUC 0.996)."
+
+  xgboost:
+    max_depth: 6
+    n_estimators: 100
+    learning_rate: 0.1
+    best_max_depth_from_sweep: 3
+    notes: "Default AUC 0.825. At max_depth=3, AUC 0.912 — matches EPSS."
+
+  lightgbm:
+    n_estimators: 100
+    max_depth: -1
+    learning_rate: 0.1
+    notes: "AUC 0.883 +/- 0.008. 2nd best model."
+
+  svm_rbf:
+    kernel: rbf
+    C: 1.0
+    subsample_size: 50000
+    notes: "AUC 0.797 +/- 0.025. Subsampled to 50K for tractability."
+
+  mlp:
+    hidden_layer_sizes: [100]
+    max_iter: 200
+    notes: "AUC 0.762 +/- 0.014. Highest variance model."
+
+  knn:
+    n_neighbors: 5
+    metric: minkowski
+    notes: "AUC 0.663 +/- 0.000. Worst performer."
+
+baselines:
+  cvss_best_threshold: 9.0
+  epss_best_threshold: 0.01
+  sanity:
+    - stratified
+    - most_frequent
+    - shuffled_labels
+
+evaluation:
+  primary_metric: AUC-ROC
+  secondary_metric: F1
+  explainability: SHAP
+  adversarial_attacks:
+    - synonym_swap
+    - field_injection
+    - noise_perturbation
