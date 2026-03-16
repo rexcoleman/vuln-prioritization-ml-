@@ -1,6 +1,6 @@
 # FINDINGS — ML-Powered Vulnerability Prioritization Engine
 
-> **Status:** DIAGNOSTICS COMPLETE — sanity baselines (5-seed), learning curves (5-seed), complexity sweeps (5-seed) all finished
+> **Status:** QUALITY GATES COMPLETE — 7 algorithms x 5 seeds, sanity baselines, learning curves, complexity sweeps, ablation, hypothesis registry, 25+ tests
 > **Project:** FP-05 (Vulnerability Prioritization)
 > **Thesis:** An ML model trained on public vulnerability data can outperform CVSS-based triage at predicting real-world exploitability.
 > **Data:** 337,953 CVEs (NVD) + 24,936 exploited labels (ExploitDB) + 320,502 EPSS scores
@@ -35,6 +35,30 @@
 **RQ1 verdict:** YES — ML (AUC 0.903) outperforms CVSS (0.662) by +24pp. CVSS is a weak exploitability predictor. However, EPSS (0.912) slightly outperforms our ML model (0.903) — EPSS is already ML-based and trained on richer data.
 
 **Critical caveat:** Test exploit rate is only 0.3% (318 of 103,352). 2024+ CVEs are too new for ExploitDB entries — this is a ground truth lag problem, not a model problem. F1 scores are depressed across all models due to extreme class imbalance in the temporal test set.
+
+### Expanded Algorithm Comparison (7 algorithms x 5 seeds) [DEMONSTRATED]
+
+All 7 algorithms trained across 5 seeds (42, 123, 456, 789, 1024). Results from `outputs/models/expanded_summary.json`.
+
+| Algorithm | Test AUC-ROC (mean +/- std) | Test F1 (mean +/- std) | Notes |
+|-----------|----------------------------|------------------------|-------|
+| **Logistic Regression** | **0.903 +/- 0.000** | **0.106 +/- 0.000** | Best default-HP model. Deterministic. |
+| LightGBM | 0.883 +/- 0.008 | 0.038 +/- 0.027 | 2nd best. Moderate seed variance. |
+| Random Forest | 0.871 +/- 0.012 | 0.001 +/- 0.002 | Severe overfitting (train AUC 0.996). |
+| XGBoost | 0.825 +/- 0.000 | 0.018 +/- 0.000 | Deterministic. Overfits at default depth=8. |
+| SVM-RBF | 0.797 +/- 0.025 | 0.098 +/- 0.012 | Highest F1 among non-LogReg. Subsampled to 50K. |
+| MLP | 0.762 +/- 0.014 | 0.004 +/- 0.003 | Highest variance. Random weight init sensitive. |
+| kNN | 0.663 +/- 0.000 | 0.006 +/- 0.000 | Worst performer. Distance metrics struggle with 49-dim sparse features. |
+
+**Key observations [DEMONSTRATED: 5 seeds]:**
+
+1. **LogReg dominates at default hyperparameters.** AUC 0.903 with zero variance across seeds. The regularized linear model cannot overfit when signal concentrates in a handful of features (EPSS, exploit refs, vendor history).
+
+2. **Tree-based models underperform due to overfitting.** RF (train AUC 0.996 vs test 0.871) and XGBoost (train 0.996 vs test 0.825) memorize the training set. However, the complexity sweep shows XGBoost at max_depth=3 achieves AUC 0.912 — matching EPSS.
+
+3. **All 7 algorithms beat CVSS (0.662) and all 3 sanity baselines** (stratified 0.504, most-frequent 0.500, shuffled 0.530). The signal is real and model-independent.
+
+4. **Deterministic models (LogReg, XGBoost, kNN) produce std=0.000** because they are fully determined by the fixed temporal split and data. Stochastic models (RF, SVM, LightGBM, MLP) show seed-dependent variance from bootstrap sampling, subsampling, or weight initialization.
 
 ### RQ2: Feature Importance (SHAP) — EPSS percentile dominates, vendor history confirms deployment-ubiquity thesis
 
