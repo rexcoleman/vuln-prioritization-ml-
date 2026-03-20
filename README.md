@@ -1,6 +1,8 @@
 # ML-Driven Vulnerability Prioritization
 
-**Predict which CVEs get exploited using ML on 338K vulnerabilities from NVD, ExploitDB, and EPSS. Replaces CVSS-based triage with data-driven prioritization.**
+**Logistic regression on 338K CVEs achieves 0.903 AUC for exploit prediction — 24pp above CVSS thresholding. EPSS percentile is the dominant predictor at 2x the next feature's SHAP value.**
+
+**Blog post:** [Why CVSS Gets It Wrong](https://rexcoleman.dev/posts/cvss-gets-it-wrong/)
 
 ## Key Results
 
