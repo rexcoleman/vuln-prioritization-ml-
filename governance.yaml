@@ -1,2 +1,8 @@
 profile: security-ml
 govml_version: "3.3"
+claude_instructions: |
+  Read FINDINGS.md YAML frontmatter for project status and quality score.
+  Read governance.yaml for profile and govML version.
+  Read reproduce.sh for how to run the experiments.
+  Do not read full experiment code unless the task requires modifying it.
+  For quality checks: run check_all_gates.sh from govML, not manual inspection.
